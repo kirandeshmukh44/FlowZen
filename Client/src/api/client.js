@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Local dev talks to the Express server on :5000; deployed builds are
+// served by the same Express process, so API calls stay same-origin.
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    ? '/api'
+    : 'http://localhost:5000/api');
 
 // Demo mode: only when explicitly enabled AND the API is unreachable.
 // Any real HTTP error response (400/401/403/500) is surfaced to the user.

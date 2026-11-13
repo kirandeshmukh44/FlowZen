@@ -1,0 +1,9 @@
+{
+  "name": "flowzen",
+  "private": true,
+  "description": "FlowZen - full-stack task management platform (React + Express + MongoDB)",
+  "scripts": {
+    "build": "npm --prefix Client install && npm --prefix Client run build && npm --prefix Server install --omit=dev",
+    "start": "node Server/server.js"
+  }
+}

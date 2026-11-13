@@ -23,6 +23,7 @@ export const AuthPage = () => {
   const navigate = useNavigate();
 
   const [loginError, setLoginError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -50,12 +51,14 @@ export const AuthPage = () => {
       return;
     }
     setLoginError('');
+    setIsSubmitting(true);
     const result = await registerCompany({
       companyName: companyName.trim(),
       adminName: adminName.trim(),
       email: email.trim(),
       password,
     });
+    setIsSubmitting(false);
     if (result.success) {
       navigate('/dashboard');
     } else {
@@ -174,6 +177,11 @@ export const AuthPage = () => {
         ) : (
           /* ===================== REGISTER COMPANY FORM ===================== */
           <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
+            {loginError && (
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-600 dark:text-rose-300">
+                <p className="font-semibold">{loginError}</p>
+              </div>
+            )}
             <div>
               <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Company / Organization Name
@@ -249,9 +257,10 @@ export const AuthPage = () => {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-hover text-white text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2"
+              disabled={isSubmitting}
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-hover disabled:opacity-60 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2"
             >
-              <span>Register Company & Enter</span>
+              <span>{isSubmitting ? 'Registering…' : 'Register Company & Enter'}</span>
               <ArrowRight size={16} />
             </button>
           </form>

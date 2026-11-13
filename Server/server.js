@@ -76,6 +76,19 @@ app.get('/api/health', (req, res) =>{
     });
 });
 
+// Serve built React client (single-service deploys like Railway).
+// Only active when Client/dist exists; harmless in local dev.
+const path = require('path');
+const fs = require('fs');
+const clientDist = path.join(__dirname, '..', 'Client', 'dist');
+if (fs.existsSync(clientDist)) {
+    app.use(express.static(clientDist));
+    app.use((req, res, next) => {
+        if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
+        res.sendFile(path.join(clientDist, 'index.html'));
+    });
+}
+
 // Database Connection
 const connectDB = async () => {
     try {
