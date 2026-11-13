@@ -23,35 +23,46 @@ export const AuthPage = () => {
   const navigate = useNavigate();
 
   const [loginError, setLoginError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    if (!email.trim() || !password) {
+      setLoginError('Please enter both your email address and password.');
+      return;
+    }
     setLoginError('');
-    const result = await login(email || 'kiran@flowzen.ai', password || 'flowzen123');
+    const result = await login(email.trim(), password);
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setLoginError(result.error || 'Account not found');
+      setLoginError(result.error || 'Invalid email or password.');
     }
   };
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    const result = await registerCompany({
-      companyName: companyName || 'FlowZen Studio',
-      adminName: adminName || 'Admin Leader',
-      email: email || 'admin@flowzen.ai',
-      password: password || 'flowzen123',
-    });
-    if (result.success) {
-      navigate('/dashboard');
+    if (!companyName.trim() || !adminName.trim() || !email.trim() || !password) {
+      setLoginError('Please fill in all registration fields.');
+      return;
     }
-  };
-
-  const handleQuickLogin = async (targetRole, demoEmail) => {
-    const result = await login(demoEmail, 'flowzen123', targetRole);
+    if (password.length < 8) {
+      setLoginError('Password must contain at least 8 characters.');
+      return;
+    }
+    setLoginError('');
+    setIsSubmitting(true);
+    const result = await registerCompany({
+      companyName: companyName.trim(),
+      adminName: adminName.trim(),
+      email: email.trim(),
+      password,
+    });
+    setIsSubmitting(false);
     if (result.success) {
       navigate('/dashboard');
+    } else {
+      setLoginError(result.error || 'Registration failed.');
     }
   };
 
@@ -115,40 +126,40 @@ export const AuthPage = () => {
               </div>
             )}
             <div>
-              <label className="block text-xs font-semibold text-zen-muted uppercase mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Email Address
               </label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zen-muted" />
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="email"
                   required
                   placeholder="e.g. kiran@flowzen.ai"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-accent/30 bg-white/60 dark:bg-black/20 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zen-muted uppercase mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zen-muted" />
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-accent/30 bg-white/60 dark:bg-black/20 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zen-muted hover:text-zen-textDark"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -166,70 +177,75 @@ export const AuthPage = () => {
         ) : (
           /* ===================== REGISTER COMPANY FORM ===================== */
           <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
+            {loginError && (
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-600 dark:text-rose-300">
+                <p className="font-semibold">{loginError}</p>
+              </div>
+            )}
             <div>
-              <label className="block text-xs font-semibold text-zen-muted uppercase mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Company / Organization Name
               </label>
               <div className="relative">
-                <Building2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zen-muted" />
+                <Building2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   required
                   placeholder="e.g. FlowZen Technologies"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-accent/30 bg-white/60 dark:bg-black/20 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zen-muted uppercase mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Admin Full Name
               </label>
               <div className="relative">
-                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zen-muted" />
+                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   required
                   placeholder="e.g. Kiran Deshmukh"
                   value={adminName}
                   onChange={(e) => setAdminName(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-accent/30 bg-white/60 dark:bg-black/20 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zen-muted uppercase mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Admin Email
               </label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zen-muted" />
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="email"
                   required
                   placeholder="admin@flowzen.ai"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-accent/30 bg-white/60 dark:bg-black/20 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zen-muted uppercase mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zen-muted" />
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="password"
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-accent/30 bg-white/60 dark:bg-black/20 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                 />
               </div>
             </div>
@@ -241,46 +257,13 @@ export const AuthPage = () => {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-hover text-white text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2"
+              disabled={isSubmitting}
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-hover disabled:opacity-60 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2"
             >
-              <span>Register Company & Enter</span>
+              <span>{isSubmitting ? 'Registering…' : 'Register Company & Enter'}</span>
               <ArrowRight size={16} />
             </button>
           </form>
-        )}
-
-        {import.meta.env.DEV && (
-          <>
-            {/* Quick Demo Login Pills (Instant 1-Click Access) */}
-            <div className="mt-6 pt-5 border-t border-accent/15">
-              <p className="text-[11px] text-zen-muted text-center uppercase tracking-wider font-semibold mb-2.5">
-                ⚡ Quick Demo 1-Click Sign In
-              </p>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleQuickLogin('Admin', 'kiran@flowzen.ai')}
-                  className="py-1.5 px-2 rounded-lg bg-accent/15 hover:bg-accent hover:text-white text-accent dark:text-accent text-[11px] font-bold transition-all text-center"
-                >
-                  👑 Admin
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickLogin('Manager', 'gayatri@flowzen.ai')}
-                  className="py-1.5 px-2 rounded-lg bg-accent/15 hover:bg-accent hover:text-white text-accent dark:text-accent text-[11px] font-bold transition-all text-center"
-                >
-                  🎯 Manager
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickLogin('Employee', 'mansi@flowzen.ai')}
-                  className="py-1.5 px-2 rounded-lg bg-accent/15 hover:bg-accent hover:text-white text-accent dark:text-accent text-[11px] font-bold transition-all text-center"
-                >
-                  🌱 Employee
-                </button>
-              </div>
-            </div>
-          </>
         )}
 
       </div>
