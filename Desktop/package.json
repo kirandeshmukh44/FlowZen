@@ -19,7 +19,9 @@
       "output": "release"
     },
     "files": [
-      "main.js"
+      "main.js",
+      "preload.js",
+      "setup.html"
     ],
     "extraResources": [
       {
@@ -27,6 +29,7 @@
         "to": "Server",
         "filter": [
           "**/*",
+          "!.env",
           "!node_modules/.cache/**"
         ]
       },

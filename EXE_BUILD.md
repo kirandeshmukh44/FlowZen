@@ -95,13 +95,16 @@ only internet access (MongoDB Atlas is cloud-hosted).
 
 ---
 
-## ⚠️ Security warnings
+## ⚠️ Security — credentials are NOT in the installer
 
-- **The installer contains `Server/.env`** — MongoDB credentials, JWT
-  secret, Cloudinary keys. Do **not** share the `.exe` publicly or upload
-  it anywhere. It is fine for your own machines only.
-- If you ever distribute it, remove `.env` from `extraResources` in
-  `Desktop/package.json` and have users set env vars instead.
+`Server/.env` is **excluded** from the bundle (`!.env` filter in
+`Desktop/package.json`). On first launch the app shows a setup window
+asking for `MONGODB_URI` + `JWT_SECRET` (+ optional Cloudinary keys) and
+saves them to `%APPDATA%\flowzen-desktop\flowzen-config.json` — local to
+that PC only.
+
+- The `.exe` is safe to share; each user enters their own credentials once.
+- To reset config on a machine, delete `%APPDATA%\flowzen-desktop\flowzen-config.json`.
 
 ## 🔄 Rebuilding after code changes
 

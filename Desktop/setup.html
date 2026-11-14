@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FlowZen Setup</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background:#0b1020; color:#e8ecf8; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
+  .card { background:#141b33; border:1px solid #2a3560; border-radius:16px; padding:32px; width:460px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p.sub { color:#8b96b8; font-size:13px; margin:0 0 20px; }
+  label { display:block; font-size:12px; font-weight:600; color:#aab4d4; margin:12px 0 4px; text-transform:uppercase; }
+  input { width:100%; box-sizing:border-box; padding:10px 12px; border-radius:10px; border:1px solid #2a3560; background:#0b1020; color:#e8ecf8; font-size:13px; }
+  input:focus { outline:none; border-color:#6c8cff; }
+  button { width:100%; margin-top:20px; padding:12px; border:none; border-radius:10px; background:#6c8cff; color:#fff; font-weight:700; font-size:14px; cursor:pointer; }
+  button:hover { background:#5877f0; }
+  .err { color:#ff7b7b; font-size:12px; margin-top:10px; min-height:16px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🌼 FlowZen Setup</h1>
+    <p class="sub">First-time setup — enter your backend credentials. Saved locally on this PC only.</p>
+    <form id="f">
+      <label>MongoDB URI</label>
+      <input id="mongo" type="text" placeholder="mongodb+srv://user:pass@cluster.mongodb.net/" required>
+      <label>JWT Secret</label>
+      <input id="jwt" type="text" placeholder="long random string" required>
+      <label>Cloudinary Cloud Name (optional)</label>
+      <input id="ccn" type="text" placeholder="for profile photo uploads">
+      <label>Cloudinary API Key (optional)</label>
+      <input id="cak" type="text">
+      <label>Cloudinary API Secret (optional)</label>
+      <input id="cas" type="text">
+      <button type="submit">Save & Launch</button>
+      <div class="err" id="err"></div>
+    </form>
+  </div>
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('err');
+      err.textContent = '';
+      try {
+        await window.flowzen.saveConfig({
+          MONGODB_URI: document.getElementById('mongo').value.trim(),
+          JWT_SECRET: document.getElementById('jwt').value.trim(),
+          CLOUDINARY_CLOUD_NAME: document.getElementById('ccn').value.trim(),
+          CLOUDINARY_API_KEY: document.getElementById('cak').value.trim(),
+          CLOUDINARY_API_SECRET: document.getElementById('cas').value.trim(),
+        });
+      } catch (ex) {
+        err.textContent = ex.message || 'Save failed';
+      }
+    });
+  </script>
+</body>
+</html>
