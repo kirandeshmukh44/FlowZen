@@ -5,3 +5,7 @@ dist/
 !.env.example
 .idea/
 *.log
+
+# Desktop installer build
+Desktop/node_modules/
+Desktop/release/
