@@ -62,11 +62,6 @@ const Comment = require('./Models/Comment');
 const Conversation = require('./Models/Conversation');
 const Message = require('./Models/Message');
 
-// Test Route
-app.get('/', (req, res) => {
-    res.send("FlowZen Server Is Running.......!");
-});
-
 //Health Check Route
 app.get('/api/health', (req, res) =>{
     res.status(200).json({
