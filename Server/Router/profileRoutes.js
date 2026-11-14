@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../Middleware/authMiddleware');
-const uploadMiddleware = require('../middleware/uploadMiddleware');
+const uploadMiddleware = require('../Middleware/uploadMiddleware');
 const { getProfile, uploadProfilePhoto, removeProfilePhoto } = require('../Controllers/profileController');
 
 // All profile routes require authentication
